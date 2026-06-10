@@ -70,6 +70,9 @@
   .mnum.today{ background:var(--accent); color:#fff; font-weight:700; box-shadow:0 2px 8px rgba(255,59,48,0.4); }
   .mevs{ width:100%; display:flex; flex-direction:column; gap:2px; padding:0 2px; }
   .mpill{ font-size:9px; font-weight:600; color:#fff; border-radius:4px; padding:1px 4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.35; }
+  .mpill.mshift{ display:flex; flex-direction:column; align-items:center; white-space:normal; line-height:1.05; padding:2px 3px; }
+  .mpill.mshift .ws-t{ font-weight:700; }
+  .mpill.mshift .ws-time{ font-size:8px; font-weight:600; opacity:0.95; }
   .mmore{ font-size:9px; color:var(--muted); padding-left:4px; }
 
   /* Year */
@@ -208,6 +211,7 @@
     x:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
     brief:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
     search:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+    gear:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
     plus:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
     pin:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
     rot:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>'
@@ -226,7 +230,7 @@
     var keepScroll=(state.view==="month")?window.scrollY:null;
     var rightIcons=state.selecting
       ? '<button class="txt-btn" data-act="cancelSel">Cancel</button>'
-      : '<div class="icons"><button class="ico" data-act="search">'+ICON.search+'</button><button class="ico" data-act="work">'+ICON.brief+'</button></div>';
+      : '<div class="icons"><button class="ico" data-act="settings">'+ICON.gear+'</button><button class="ico" data-act="search">'+ICON.search+'</button><button class="ico" data-act="work">'+ICON.brief+'</button></div>';
     var seg='<div class="seg">'+LEVELS.map(function(v){ return '<button data-view="'+v+'" class="'+(state.view===v?'on':'')+'">'+v.charAt(0).toUpperCase()+v.slice(1)+'</button>'; }).join("")+'</div>';
     var head='<div class="hdr"><div class="hrow"><div class="title">'+contextTitle()+'</div>'+rightIcons+'</div>'+seg
       +'<div class="subnav"><button class="ico" data-act="prev">'+ICON.left+'</button><button class="ico" data-act="next">'+ICON.right+'</button>'
@@ -274,7 +278,7 @@
       var key=toKey(date), sh=getShift(key), evs=eventsFor(key);
       var we=isWeekend(date)?' we':'', sel=(state.selecting&&state.selDays[key])?' sel':'';
       h+='<button class="mcell'+we+sel+'" data-day="'+key+'"><div class="mnum'+(key===todayKey?' today':'')+'">'+date.getDate()+'</div><div class="mevs">';
-      if(sh) h+='<div class="mpill" style="background:'+sh.color+'">'+esc(sh.name)+'</div>';
+      if(sh){ if(sh.start){ h+='<div class="mpill mshift" style="background:'+sh.color+'"><span class="ws-t">Work</span><span class="ws-time">'+sh.start+'–'+sh.end+'</span></div>'; } else { h+='<div class="mpill" style="background:'+sh.color+'">'+esc(sh.name)+'</div>'; } }
       evs.slice(0,2).forEach(function(e){ h+='<div class="mpill" style="background:'+e.color+'">'+esc(e.title)+'</div>'; });
       var extra=evs.length-2; if(extra>0) h+='<div class="mmore">+'+extra+' more</div>';
       h+='</div></button>';
@@ -322,7 +326,7 @@
     days.forEach(function(key){
       var sh=getShift(key); var ad=eventsFor(key).filter(function(e){return e.allDay||!e.start;});
       h+='<div class="tladcell">';
-      if(sh){ var loc=(n===1&&sh.location)?' · '+sh.location:''; h+='<div class="adbar" style="background:'+sh.color+'" title="'+esc(sh.name+(sh.location?' — '+sh.location:''))+'">'+esc(sh.name)+(sh.start?' '+sh.start+'–'+sh.end:'')+esc(loc)+'</div>'; }
+      if(sh){ if(sh.start){ var loc=(n===1&&sh.location)?' · '+sh.location:''; h+='<div class="adbar" style="background:'+sh.color+'" title="'+esc('Work '+sh.start+'–'+sh.end+(sh.location?' — '+sh.location:''))+'">Work '+sh.start+'–'+sh.end+esc(loc)+'</div>'; } else { h+='<div class="adbar" style="background:'+sh.color+'">'+esc(sh.name)+'</div>'; } }
       ad.forEach(function(e){ h+='<div class="adbar" style="background:'+e.color+'" data-ev="'+e.id+'">'+esc(e.title)+'</div>'; });
       h+='</div>';
     });
@@ -358,6 +362,7 @@
     else if(act==="next") step(1);
     else if(act==="today"){ if(state.view==="month"){ state.cursor=new Date(); updateTitle(); scrollToMonth(state.cursor,true); } else { state.cursor=new Date(); render(); } }
     else if(act==="work") openWork();
+    else if(act==="settings") openSettings();
     else if(act==="search") openSearch();
     else if(act==="add") openEventForm(toKey(state.cursor),null,null);
     else if(act==="select"){ state.selecting=true; state.selDays={}; render(); }
@@ -461,10 +466,16 @@
 
   function openMultiAssign(){
     var keys=Object.keys(state.selDays);
-    var inner='<div style="font-size:13px;color:var(--muted);margin-bottom:12px">Applies the same shift to all '+keys.length+' selected day'+(keys.length===1?"":"s")+'.</div>'+shiftListHTML()
+    var PRESETS=[["05:50","16:00"],["06:50","17:00"]];
+    function ensureWork(start,end){ var f=state.shiftTypes.filter(function(s){return s.name==="Work"&&s.start===start&&s.end===end;})[0]; if(f)return f.id; var ns={id:uid(),name:"Work",color:"#007AFF",start:start,end:end,location:""}; state.shiftTypes.push(ns); persist(); return ns.id; }
+    var presetHTML=PRESETS.map(function(p,i){ return '<button class="row" data-preset="'+i+'"><div style="width:12px;height:12px;border-radius:50%;background:#007AFF"></div>Work<span style="color:var(--muted);font-size:13px;margin-left:auto">'+p[0]+'–'+p[1]+'</span></button>'; }).join("");
+    var inner='<div style="font-size:13px;color:var(--muted);margin-bottom:12px">Applies the same shift to all '+keys.length+' selected day'+(keys.length===1?"":"s")+'.</div>'
+      +'<div class="label">QUICK SHIFTS</div>'+presetHTML
+      +'<div class="label" style="margin-top:14px">SHIFTS</div>'+shiftListHTML()
       +'<button class="row" data-s="" style="color:var(--muted)">Clear (no shift)</button><button class="row" data-reset="1" style="color:var(--accent)">Reset to rotation</button>';
     var body=sheet("Set shift for "+keys.length+" days",inner);
     function apply(fn){ keys.forEach(fn); persist(); closeModal(); state.selecting=false; state.selDays={}; render(); }
+    body.querySelectorAll("[data-preset]").forEach(function(b){ b.onclick=function(){ var p=PRESETS[+b.getAttribute("data-preset")]; var id=ensureWork(p[0],p[1]); apply(function(k){ state.manual[k]=id; }); }; });
     body.querySelectorAll("[data-s]").forEach(function(b){ b.onclick=function(){ var v=b.getAttribute("data-s"); apply(function(k){ state.manual[k]=v; }); }; });
     body.querySelector("[data-reset]").onclick=function(){ apply(function(k){ delete state.manual[k]; }); };
   }
@@ -497,6 +508,50 @@
     build();
   }
 
+  function downloadFile(name,content,mime){ try{ var blob=new Blob([content],{type:mime}); var url=URL.createObjectURL(blob); var a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },120); }catch(e){ alert("Download failed: "+e); } }
+  function importBackup(text){ try{ var d=JSON.parse(text); state.events=(d.events||[]).map(normEvent); state.shiftTypes=(d.shiftTypes||DEFAULT_SHIFTS.slice()).map(normShift); state.rotation=d.rotation||null; state.manual=d.manual||{}; persist(); closeModal(); render(); alert("Backup restored."); }catch(e){ alert("Couldn't read that file — make sure it's a backup exported from this app."); } }
+  function buildICS(){
+    function p2(n){ return String(n).padStart(2,"0"); }
+    function icsDate(k){ var d=fromKey(k); return d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate()); }
+    function icsDT(k,hhmm){ var t=hhmm.split(":"); return icsDate(k)+"T"+p2(+t[0])+p2(+t[1])+"00"; }
+    function ie(s){ return String(s||"").replace(/([\\;,])/g,"\\$1").replace(/\n/g,"\\n"); }
+    var now=new Date();
+    var stamp=now.getUTCFullYear()+p2(now.getUTCMonth()+1)+p2(now.getUTCDate())+"T"+p2(now.getUTCHours())+p2(now.getUTCMinutes())+p2(now.getUTCSeconds())+"Z";
+    var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ShiftCalendar//EN","CALSCALE:GREGORIAN"];
+    function ev(uid,summary,key,start,end,allDay,loc,notes){
+      L.push("BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+stamp);
+      if(allDay){ L.push("DTSTART;VALUE=DATE:"+icsDate(key)); L.push("DTEND;VALUE=DATE:"+icsDate(toKey(addDays(fromKey(key),1)))); }
+      else{
+        var sM=minutesOf(start)||0, eM=minutesOf(end), endKey=key;
+        if(eM===null) eM=sM+60;
+        if(eM<=sM){ endKey=toKey(addDays(fromKey(key),1)); eM=eM%1440; }
+        L.push("DTSTART:"+icsDT(key,start));
+        L.push("DTEND:"+icsDT(endKey, p2(Math.floor(eM/60))+":"+p2(eM%60)));
+      }
+      L.push("SUMMARY:"+ie(summary));
+      if(loc) L.push("LOCATION:"+ie(loc));
+      if(notes) L.push("DESCRIPTION:"+ie(notes));
+      L.push("END:VEVENT");
+    }
+    state.events.forEach(function(e){ ev("evt-"+e.id+"@shiftcal", e.title, e.date, e.start, e.end, (e.allDay||!e.start), e.location, e.notes); });
+    var d0=addDays(new Date(),-30), d1=addDays(new Date(),180);
+    for(var d=new Date(d0); d<=d1; d=addDays(d,1)){ var k=toKey(d); var sh=getShift(k); if(sh&&sh.start){ ev("shift-"+k+"@shiftcal","Work",k,sh.start,sh.end,false,sh.location,""); } }
+    L.push("END:VCALENDAR");
+    return L.join("\r\n");
+  }
+  function openSettings(){
+    var inner='<div class="label">BACKUP &amp; RESTORE</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:12px">Your data lives only in this browser. Download a backup file to keep it safe — email it to yourself or save it to Files / iCloud Drive — then restore it here on any device, even after a reset.</div>'
+      +'<button class="btn primary" id="exp">Download Backup</button>'
+      +'<button class="btn secondary" id="imp" style="margin-top:10px">Restore from Backup</button>'
+      +'<div class="label" style="margin-top:24px">ADD TO APPLE CALENDAR</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:12px">Export your shifts and events as a calendar file. Open it on your iPhone and tap to add them into the Apple Calendar app.</div>'
+      +'<button class="btn secondary" id="ics">Export Calendar File (.ics)</button>';
+    var body=sheet("Sync & Backup",inner);
+    body.querySelector("#exp").onclick=function(){ downloadFile("shift-calendar-backup.json", JSON.stringify({events:state.events,shiftTypes:state.shiftTypes,rotation:state.rotation,manual:state.manual},null,2), "application/json"); };
+    body.querySelector("#ics").onclick=function(){ downloadFile("shift-calendar.ics", buildICS(), "text/calendar"); };
+    body.querySelector("#imp").onclick=function(){ var inp=document.createElement("input"); inp.type="file"; inp.accept=".json,application/json"; inp.onchange=function(){ var f=inp.files&&inp.files[0]; if(!f)return; var r=new FileReader(); r.onload=function(){ importBackup(String(r.result)); }; r.readAsText(f); }; inp.click(); };
+  }
   render();
 })();
 </script>
